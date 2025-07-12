@@ -1,0 +1,26 @@
+.main-container {
+    width: 200px;
+    height: 300px;
+    display: flex;
+    overflow: hidden;
+}
+img {
+    transition: all 0.5s ease;
+}
+.indicators-container {
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.indicator-dot {
+    width: 12px;
+    height: 12px;
+    margin: 0 5px;
+    background-color: #ccc;
+    border-radius: 50%;
+}
+
+.indicator-dot.active {
+    background-color: #333;
+}
