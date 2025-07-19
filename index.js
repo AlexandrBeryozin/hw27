@@ -158,35 +158,38 @@ function createCarouselButtons(getNextSlide) {
 
 function createPauseButton() {
     const pauseButton = document.createElement('button')
-
     pauseButton.innerText = 'Pause'
-    pauseButton.id = 'pause-button';
-    pauseButton.style.background = 'green'
-    pauseButton.style.color = 'white'
-
-    pauseButton.addEventListener('click', () => {
-        pauseButton.classList.toggle('pause');
-    });
     body.appendChild(pauseButton)
-}
-function pauseChecker() {
-    setInterval(() => {
-        const pauseButton = document.getElementById('pause-button');
-        const isPaused = pauseButton.classList.contains('pause');
-
-        if (!isPaused) {
-            pauseButton.innerText = 'Pause'
+    pauseButton.style.background = 'green'
+    pauseButton.addEventListener('click', () => {
+        pauseButton.innerText = pauseButton.innerText === 'Pause' ? 'Play' : 'Pause'
+        if (pauseButton.innerText === 'Pause') {
             pauseButton.style.background = 'green'
-            console.log('Iнтервал виконуэться');
-            const slide = getNextSlide()
-            handleSlideChange(slide)
         } else {
-            console.log('Iнтервал не виконуэться');
-            pauseButton.innerText = 'Paused'
             pauseButton.style.background = 'red'
         }
-    }, 3000);
+    })
+    return pauseButton
 }
+
+
+
+        /* const pauseButton = document.getElementById('pause-button');
+       const isPaused = pauseButton.classList.contains('pause');
+
+     if (!isPaused) {
+           pauseButton.innerText = 'Pause'
+           pauseButton.style.background = 'green'
+           console.log('Iнтервал виконуэться');
+           const slide = getNextSlide()
+           handleSlideChange(slide)
+       } else {
+           console.log('Iнтервал не виконуэться');
+           pauseButton.innerText = 'Paused'
+           pauseButton.style.background = 'red'
+       }  */
+
+
 
 
 
@@ -201,20 +204,16 @@ createCarouselButtons(getNextSlide)
 
 indicate(imgsSrc.length)
 
-createPauseButton();
-pauseChecker();
+const pauseButton = createPauseButton()
 
+setInterval(() => {
 
-const sliderWrapper = document.querySelector('.slider-wrapper');
+    if(pauseButton.innerText === 'Pause') {
+        const slide = getNextSlide();
+        handleSlideChange(slide)
+    }
+}, 3000);
 
-sliderWrapper.addEventListener('touchstart', (e) => {
-    touchStartX = e.touches[0].clientX;
-});
-
-sliderWrapper.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].clientX;
-    handleSwipeGesture();
-});
 
 
 
