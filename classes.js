@@ -134,6 +134,7 @@ class Slider{
     createPauseButton() {
         this.pauseButton = document.createElement('button')
         this.pauseButton.innerText = 'Pause'
+        this.pauseButton.style.background = 'green'
         this.targetContainer.appendChild(this.pauseButton)
         this.pauseButton.addEventListener('click', () => {
             this.pauseButton.innerText = this.pauseButton.innerText === 'Pause' ? 'Play' : 'Pause'
@@ -145,7 +146,6 @@ class Slider{
         })
     }
 
-    /*КНОПКА НЕ ПЕРЕДАЕТСЯ ИЗ ФУНКЦИИ ВЫШЕ UNDEFINED ИСПРАВИТЬ*/
 
     nextSlide() {
 
@@ -168,7 +168,6 @@ class Slider{
 
         setInterval(() => {
             this.nextSlide();
-            console.log("Интервал работает")
         }, this.autoSwiperTimeout)
 }
 
