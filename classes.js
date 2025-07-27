@@ -1,5 +1,5 @@
 const config = {
-    imgsSrc2: [
+    imgsSrc: [
 
 
     'https://picsum.photos/id/260/200/300',
@@ -12,12 +12,13 @@ const config = {
 
 
 class Slider{
-    constructor(imgsSrc2List, targetContainer, imgSize){
-        this.imgsSrc2List = imgsSrc2List
-        this.numberOfSlides1 = imgsSrc2List.length
+    constructor(imgsSrcList, targetContainer, imgSize, autoSwiperTimeout){
+        this.imgsSrcList = imgsSrcList
+        this.numberOfSlides = imgsSrcList.length
         this.targetContainer = targetContainer
         this.imgSize = imgSize
         this.currentSlide = 0
+        this.autoSwiperTimeout = autoSwiperTimeout
     }
 
     createMainContainer(){
@@ -35,20 +36,20 @@ class Slider{
     }
 
     createAndRenderImages () {
-        const listOfImageElements = this.imgsSrc2List.map(createImgElement)
+        const listOfImageElements = this.imgsSrcList.map(this.createImgElement)
         listOfImageElements.forEach((imgElement)=>this.sliderContainer.appendChild(imgElement))
     }
 
-        SetNextSlide(directionForward = true) {
+        getNextSlide(directionForward = true) {
             if(directionForward){
                 ++this.currentSlide
-                if(currentSlide===this.numberOfSlides1){
+                if(this.currentSlide===this.numberOfSlides){
                     this.currentSlide = 0
                 }
             }else {
                 --this.currentSlide
                 if(this.currentSlide<0) {
-                    this.currentSlide = this.numberOfSlides1-1
+                    this.currentSlide = this.numberOfSlides-1
                 }
             }
         }
@@ -56,36 +57,36 @@ class Slider{
 
     indicate(){
         const container = document.createElement('div')
-        container.classList.add('indicators-container')
-        for(let i = 0; i<this.numberOfSlides1; i++) {
+        container.classList.toggle('indicators-container')
+        for(let i = 0; i<this.numberOfSlides; i++) {
             let indicator = document.createElement("span")
-            indicator.classList.add('indicator-dot')
+            indicator.classList.toggle('indicator-dot')
             if (i === 0) {
-                indicator.classList.add('active')
+                indicator.classList.toggle('active')
             }
 
-            indicator.addEventListener('click', () => {
-                goToSlide(i);
-            });
-
             container.appendChild(indicator)
-            indicators.push(indicator)
         }
         this.targetContainer.appendChild(container)
     }
 
 
-    updateIndicators() {
-        indicators.forEach((indicator, index) => {
+ /*   updateIndicators() {
+            indicators.forEach((indicator, index) => {
             indicator.classList.toggle('active', index === this.currentSlide)
         })
-    }
+    } */
 
 
     handleSlideChange() {
-        const firstImage = document.querySelector("img[src='${this.imgsSrc2List[0]}']");
-        firstImage.style['margin-left'] =  `${this.currentSlide * -singleImgSize}px`
-        updateIndicators(this.currentSlide)
+        const firstImage = document.querySelector(`img[src='${this.imgsSrcList[0]}']`);
+        firstImage.style['margin-left'] =  `${this.currentSlide * -this.imgSize}px`
+        const currentIndicator = document.getElementsByClassName('active')[0]
+        currentIndicator.classList.toggle('active')
+
+
+         const indicators = document.getElementsByClassName('indicator-dot')
+        indicators[this.currentSlide].classList.toggle('active')
     }
 
     createCarouselButtons() {
@@ -97,13 +98,13 @@ class Slider{
 
 
         rightButton.addEventListener('click', () => {
-            const slide = getNextSlide()
-            handleSlideChange(slide)
+            this.getNextSlide()
+            this.handleSlideChange()
         })
 
         leftButton.addEventListener('click', () => {
-            const slide = getNextSlide(false)
-            handleSlideChange(slide)
+            this.getNextSlide(false)
+            this.handleSlideChange()
         })
 
       /*  addEventListener("keydown", function(event) {
@@ -128,31 +129,47 @@ class Slider{
 
     }
 
+
+
     createPauseButton() {
-        const pauseButton = document.createElement('button')
-        pauseButton.innerText = 'Pause'
-        this.targetContainer.appendChild(pauseButton)
-        pauseButton.addEventListener('click', () => {
-            pauseButton.innerText = pauseButton.innerText === 'Pause' ? 'Play' : 'Pause'
-            if (pauseButton.innerText === 'Pause') {
-                pauseButton.style.background = 'green'
+        this.pauseButton = document.createElement('button')
+        this.pauseButton.innerText = 'Pause'
+        this.targetContainer.appendChild(this.pauseButton)
+        this.pauseButton.addEventListener('click', () => {
+            this.pauseButton.innerText = this.pauseButton.innerText === 'Pause' ? 'Play' : 'Pause'
+            if (this.pauseButton.innerText === 'Pause') {
+                this.pauseButton.style.background = 'green'
             } else {
-                pauseButton.style.background = 'red'
+                this.pauseButton.style.background = 'red'
             }
         })
     }
+
+    /*КНОПКА НЕ ПЕРЕДАЕТСЯ ИЗ ФУНКЦИИ ВЫШЕ UNDEFINED ИСПРАВИТЬ*/
+
+    nextSlide() {
+
+        if (this.pauseButton.innerText === 'Pause') {
+            this.currentSlide = (this.currentSlide + 1) % this.numberOfSlides;
+            this.handleSlideChange()
+        }
+    }
+
+
+
 
 
     initSlider(){
         this.createMainContainer()
         this.createAndRenderImages()
         this.createCarouselButtons()
-        this.createImgElement()
-        this.handleSlideChange()
-        this.SetNextSlide()
-        this.updateIndicators()
         this.indicate()
         this.createPauseButton()
+
+        setInterval(() => {
+            this.nextSlide();
+            console.log("Интервал работает")
+        }, this.autoSwiperTimeout)
 }
 
 
@@ -161,5 +178,5 @@ class Slider{
 
 }
 
-const body1 = document.getElementsByTagName('body')[0]
-new Slider(config.imgsSrc2, body1,config.imgSize).initSlider()
+const body = document.getElementsByTagName('body')[0]
+new Slider(config.imgsSrc, body,config.imgSize, config.autoSwiperTimeout).initSlider()
